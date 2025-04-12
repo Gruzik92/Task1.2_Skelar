@@ -1,0 +1,23 @@
+WITH user_total AS (
+    SELECT 
+        id_user,
+        id_region,
+        SUM(amount) AS total_amount
+    FROM orders
+    GROUP BY id_user, id_region
+),
+region_avg AS (
+    SELECT 
+        id_region,
+        AVG(total_amount) AS avg_region_amount
+    FROM user_total
+    GROUP BY id_region
+)
+SELECT 
+    u.id_user,
+    u.id_region,
+    u.total_amount,
+    r.avg_region_amount
+FROM user_total u
+JOIN region_avg r ON u.id_region = r.id_region
+WHERE u.total_amount > r.avg_region_amount;
